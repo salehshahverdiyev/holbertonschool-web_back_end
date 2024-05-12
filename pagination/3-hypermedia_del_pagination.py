@@ -43,18 +43,25 @@ class Server:
         """
             Method Documentation
         """
-        assert 0 <= index < len(self.indexed_dataset())
-        assert 0 <= index < len(self.indexed_dataset())
-        pages = []
-        next_index = index + page_size
-        for i in range(index, index + page_size):
-            if not self.indexed_dataset().get(i):
-                i += 1
-                next_index += 1
-            pages.append(self.indexed_dataset()[i])
+        dataset_len = len(self.dataset())
+        assert 0 <= index < dataset_len
+
+        indexed_dataset = self.indexed_dataset()
+        page_dict = {}
+
+        i = index
+        while (len(page_dict) < page_size and i < dataset_len):
+            if i in indexed_dataset:
+                page_dict[i] = indexed_dataset[i]
+            i += 1
+
+        page = list(page_dict.values())
+        vals = len(page)
+        keys = page_dict.keys()
+
         return {
-            "index": index,
-            "next_index": next_index,
-            "page_size": page_size,
-            "data": pages,
+                'index': index,
+                'next_index': max(keys) + 1,
+                'page_size': vals,
+                'data': page
         }
